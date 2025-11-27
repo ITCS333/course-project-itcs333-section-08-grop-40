@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,7 +16,15 @@
             <div class="nav-container">
                 <h1 class="logo">ITCS333</h1>
                 <div class="nav-links">
-                    <a href="src/auth/login.php" class="btn-login">Login</a>
+                    <?php if (isset($_SESSION['user_id'])): ?>
+                        <span>Welcome, <?php echo htmlspecialchars($_SESSION['user_name']); ?>!</span>
+                        <?php if ($_SESSION['user_role'] == 'admin'): ?>
+                            <a href="src/admin/dashboard.php" class="btn-login">Admin Dashboard</a>
+                        <?php endif; ?>
+                        <a href="src/auth/logout.php" class="btn-logout">Logout</a>
+                    <?php else: ?>
+                        <a href="src/auth/login.php" class="btn-login">Login</a>
+                    <?php endif; ?>
                 </div>
             </div>
         </nav>
@@ -28,7 +39,9 @@
                     Learn to build modern web applications using HTML, CSS, JavaScript, PHP, and MySQL.
                     This course covers both front-end and back-end development skills.
                 </p>
-                <a href="src/auth/login.php" class="btn-primary">Get Started</a>
+                <?php if (!isset($_SESSION['user_id'])): ?>
+                    <a href="src/auth/login.php" class="btn-primary">Get Started</a>
+                <?php endif; ?>
             </div>
         </section>
 
