@@ -88,6 +88,6 @@ async function loadWeeks() {
 }catch(error){
   console.error('Error loading weeks:', error);
 }
-
+ 
 document.addEventListener('DOMContentLoaded', loadWeeks);
 }

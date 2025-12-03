@@ -168,6 +168,7 @@ function handleTableClick(event) {
  */
 async function loadAndInitialize() {
   // ... your implementation here ...
+  
   try{
   const response=await fetch('weeks.json');
 
