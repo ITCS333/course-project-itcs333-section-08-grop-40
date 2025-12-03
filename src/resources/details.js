@@ -21,8 +21,15 @@
 let currentResourceId = null;
 let currentComments = [];
 
+
 // --- Element Selections ---
 // TODO: Select all the elements you added IDs for in step 2.
+const resourceTitle = document.querySelector("#resource-title");
+const resourceDescription = document.querySelector("#resource-description");
+const resourceLink = document.querySelector("#resource-link");
+const commentList = document.querySelector("#comment-list");
+const commentForm = document.querySelector("#comment-form");
+const newComment = document.querySelector("#new-comment");
 
 // --- Functions ---
 
@@ -35,6 +42,8 @@ let currentComments = [];
  */
 function getResourceIdFromURL() {
   // ... your implementation here ...
+  const params = new URLSearchParams(window.location.search);
+  return params.get("id");
 }
 
 /**
@@ -47,6 +56,9 @@ function getResourceIdFromURL() {
  */
 function renderResourceDetails(resource) {
   // ... your implementation here ...
+   resourceTitle.textContent = resource.title;
+  resourceDescription.textContent = resource.description;
+  resourceLink.href = resource.link;
 }
 
 /**
@@ -57,6 +69,14 @@ function renderResourceDetails(resource) {
  */
 function createCommentArticle(comment) {
   // ... your implementation here ...
+   const article = document.createElement("article");
+
+  article.innerHTML = `
+      <p>${comment.text}</p>
+      <footer>Posted by: ${comment.author}</footer>
+  `;
+
+  return article;
 }
 
 /**
@@ -69,6 +89,12 @@ function createCommentArticle(comment) {
  */
 function renderComments() {
   // ... your implementation here ...
+   commentList.innerHTML = "";
+
+  currentComments.forEach(comment => {
+    const item = createCommentArticle(comment);
+    commentList.appendChild(item);
+  });
 }
 
 /**
@@ -86,6 +112,20 @@ function renderComments() {
  */
 function handleAddComment(event) {
   // ... your implementation here ...
+   event.preventDefault();
+
+  const commentText = newComment.value.trim();
+  if (!commentText) return;
+
+  const newCommentObj = {
+    author: "Student",
+    text: commentText
+  };
+
+  currentComments.push(newCommentObj);
+  renderComments();
+
+  newComment.value = "";
 }
 
 /**
@@ -107,6 +147,41 @@ function handleAddComment(event) {
  */
 async function initializePage() {
   // ... your implementation here ...
+  currentResourceId = getResourceIdFromURL();
+  if (!currentResourceId) {
+    resourceTitle.textContent = "Resource not found.";
+    return;
+  }
+
+  try {
+    const [resourceRes, commentRes] = await Promise.all([
+      fetch("./api/resources.json"),
+      fetch("./api/resource-comments.json")
+    ]);
+
+    const resources = await resourceRes.json();
+    const commentsData = await commentRes.json();
+
+    // Find the resource
+    const resource = resources.find(r => r.id === currentResourceId);
+
+    // Load comments for this ID
+    currentComments = commentsData[currentResourceId] || [];
+
+    if (!resource) {
+      resourceTitle.textContent = "Resource not found.";
+      return;
+    }
+
+    renderResourceDetails(resource);
+    renderComments();
+
+    commentForm.addEventListener("submit", handleAddComment);
+
+  } catch (error) {
+    console.error("Error loading resource:", error);
+    resourceTitle.textContent = "Error loading resource.";
+  }
 }
 
 // --- Initial Page Load ---
