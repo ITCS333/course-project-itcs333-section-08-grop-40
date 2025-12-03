@@ -174,7 +174,7 @@ async function loadAndInitialize() {
 
   if(!response.ok){
     throw new Error('Failed to load weeks.json');
-  }
+  }   
   weeks=await response.json();
 
   renderTable();
