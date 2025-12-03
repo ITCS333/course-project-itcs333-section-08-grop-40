@@ -142,6 +142,7 @@ const newWeek = {
 function handleTableClick(event) {
   // ... your implementation here ...
   const btn=event.target.closest('button')
+  
   if(!btn)
     return;
 

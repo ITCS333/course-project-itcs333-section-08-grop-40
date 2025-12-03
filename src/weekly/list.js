@@ -36,6 +36,7 @@ function createWeekArticle(week) {
   article.appendChild(h3);
 
   if(startDate){
+    
     const dateP=document.createElement('P');
     dateP.textContent=`Start Date: ${startDate}`;
     article.appendChild(dateP);
