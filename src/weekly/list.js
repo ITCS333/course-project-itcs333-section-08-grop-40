@@ -89,6 +89,5 @@ async function loadWeeks() {
   console.error('Error loading weeks:', error);
 }
 
-
 document.addEventListener('DOMContentLoaded', loadWeeks);
 }
