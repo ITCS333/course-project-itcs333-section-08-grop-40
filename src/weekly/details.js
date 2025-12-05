@@ -33,7 +33,6 @@ const commentList=document.getElementById("comment-list");
 const commentForm=document.getElementById("comment-form");
 const newCommentText=document.getElementById("new-comment-text");
 
-
 // --- Functions ---
 
 /**
