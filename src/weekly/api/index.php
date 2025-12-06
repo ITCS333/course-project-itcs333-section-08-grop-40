@@ -142,6 +142,7 @@ function getAllWeeks($db) {
     $stmt->bindValue(1, "%$search%");
     $stmt->bindValue(2, "%$search%");
 }
+
     // TODO: Execute the query
     $stmt->execute();
     // TODO: Fetch all results as an associative array

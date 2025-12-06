@@ -153,7 +153,6 @@ function handleTableClick(event) {
    }
 
 }
-
 /**
  * TODO: Implement the loadAndInitialize function.
  * This function needs to be 'async'.
