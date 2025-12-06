@@ -280,6 +280,7 @@ if (!$dt || $dt->format('Y-m-d') !== $startDate) {
     $stmt->bind_param("s", $weekId);
     $stmt->execute();
     $result = $stmt->get_result();
+    
 
 if ($result->fetch_assoc()) {
     http_response_code(409);

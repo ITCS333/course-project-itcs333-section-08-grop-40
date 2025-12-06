@@ -26,6 +26,7 @@
 function createWeekArticle(week) {
   // ... your implementation here ...
   
+
   const{id,title,startDate,description}=week;
   const article=document.createElement('article');
   article.className='week-article';
