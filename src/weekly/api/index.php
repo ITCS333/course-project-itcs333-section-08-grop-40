@@ -64,8 +64,9 @@ require_once '../config/Database.php';
 // TODO: Get the PDO database connection
 // Example: $database = new Database();
 //          $db = $database->getConnection();
-$database = new Database();
-$db = $database->getConnection();
+$stmt = $db->prepare("SELECT * FROM weeks WHERE week_id = ?");
+$stmt->execute([$weekId]); 
+$week = $stmt->fetch(PDO::FETCH_ASSOC);
 
 // TODO: Get the HTTP request method
 // Use $_SERVER['REQUEST_METHOD']
@@ -76,7 +77,14 @@ $method = $_SERVER['REQUEST_METHOD'];
 // Decode JSON data using json_decode()
 $rawData = file_get_contents('php://input');
 $data = json_decode($rawData, true);
-
+if ($rawData && json_last_error() !== JSON_ERROR_NONE) {
+    http_response_code(400);
+    echo json_encode([
+        "status" => "error",
+        "message" => "Invalid JSON in request body"
+    ]);
+    exit;
+}
 // TODO: Parse query parameters
 // Get the 'resource' parameter to determine if request is for weeks or comments
 // Example: ?resource=weeks or ?resource=comments
@@ -117,7 +125,7 @@ function getAllWeeks($db) {
     $params[] = $searchParam;
     $types .= "ss";
      }
-    
+
     // TODO: Check if sort parameter exists
     // Validate sort field to prevent SQL injection (only allow: title, start_date, created_at)
     // If invalid, use default sort field (start_date)
@@ -196,12 +204,12 @@ function getWeekById($db, $weekId) {
     }
 
     // TODO: Bind the week_id parameter
-    $stmt->bind_param("s", $weekId);
-    // TODO: Execute the query
+    $stmt->bindValue(1, $weekId, PDO::PARAM_INT);
     $stmt->execute();
-    $result = $stmt->get_result();
+    // TODO: Execute the query
+    $stmt->execute([$weekId]);
     // TODO: Fetch the result
-     $week = $result->fetch_assoc();
+     $week = $stmt->fetch(PDO::FETCH_ASSOC);
     // TODO: Check if week exists
     // If yes, decode the links JSON and return success response with week data
     // If no, return error response with 404 status
@@ -277,12 +285,10 @@ if (!$dt || $dt->format('Y-m-d') !== $startDate) {
     // If duplicate found, return error response with 409 status (Conflict)
     $sql = "SELECT week_id FROM weeks WHERE week_id = ?";
     $stmt = $db->prepare($sql);
-    $stmt->bind_param("s", $weekId);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
+    $stmt->execute([$weekId]);
+       
 
-if ($result->fetch_assoc()) {
+if ($stmt->fetch(PDO::FETCH_ASSOC)) {
     http_response_code(409);
     echo json_encode([
         'status' => 'error',
@@ -303,7 +309,7 @@ if (isset($data['links']) && is_array($data['links'])) {
     // INSERT INTO weeks (week_id, title, start_date, description, links) VALUES (?, ?, ?, ?, ?)
     $sql = "INSERT INTO weeks (week_id, title, start_date, description, links) VALUES (?, ?, ?, ?, ?)";
     $stmt = $db->prepare($sql);
-    ;
+    
     // TODO: Bind parameters
     $stmt->bind_param("sssss", $weekId, $title, $startDate, $description, $links);
     // TODO: Execute the query
@@ -520,7 +526,7 @@ if (!$result->fetch_assoc()) {
     // DELETE FROM weeks WHERE week_id = ?
     $deleteWeekSql = "DELETE FROM weeks WHERE week_id = ?";
     $deleteWeekStmt = $db->prepare($deleteWeekSql);
-    $deleteWeekStmt->bind_param("s", $weekId);
+    
     // TODO: Bind the week_id parameter
     $deleteWeekStmt->bind_param("s", $weekId);
     // TODO: Execute the query
@@ -725,7 +731,6 @@ if (!$result->fetch_assoc()) {
     // DELETE FROM comments WHERE id = ?
     $deleteSql = "DELETE FROM comments WHERE id = ?";
     $stmt = $db->prepare($deleteSql);
-    $stmt->bind_param("i", $commentId);
     // TODO: Bind the id parameter
     $stmt->bind_param("i", $commentId);
     // TODO: Execute the query
@@ -757,8 +762,6 @@ try {
     // TODO: Determine the resource type from query parameters
     // Get 'resource' parameter (?resource=weeks or ?resource=comments)
     // If not provided, default to 'weeks'
-    
-    
     // Route based on resource type and HTTP method
     
     // ========== WEEKS ROUTES ==========
@@ -892,7 +895,7 @@ function sendError($message, $statusCode = 400) {
     // TODO: Create error response array
     // Structure: ['success' => false, 'error' => $message]
    $errorResponse = [
-        'success' => false,
+        'status' => 'error',
         'error' => $message];
     // TODO: Call sendResponse() with the error array and status code
     sendResponse($errorResponse, $statusCode);
