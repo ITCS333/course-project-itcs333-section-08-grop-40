@@ -151,7 +151,7 @@ function handleTableClick(event) {
     weeks=weeks.filter(week=>week.id!==id)
     renderTable();
    }
-
+  
 }
 /**
  * TODO: Implement the loadAndInitialize function.
