@@ -18,17 +18,22 @@ let students = [];
 // the HTML document is parsed before this script runs.
 
 // TODO: Select the student table body (tbody).
+const studentTableBody = document.querySelector('#student-table tbody');
 
 // TODO: Select the "Add Student" form.
 // (You'll need to add id="add-student-form" to this form in your HTML).
+const addStudentForm = document.querySelector('#add-student-form');
 
 // TODO: Select the "Change Password" form.
 // (You'll need to add id="password-form" to this form in your HTML).
+const changePasswordForm = document.querySelector('#password-form');
 
 // TODO: Select the search input field.
 // (You'll need to add id="search-input" to this input in your HTML).
+const searchInput = document.querySelector('#search-input');
 
 // TODO: Select all table header (th) elements in thead.
+const tableHeaders = document.querySelectorAll('#student-table thead th');
 
 // --- Functions ---
 
@@ -44,7 +49,37 @@ let students = [];
  * - A "Delete" button with class "delete-btn" and a data-id attribute set to the student's ID.
  */
 function createStudentRow(student) {
-  // ... your implementation here ...
+  const tr = document.createElement('tr');
+  
+  const nameTd = document.createElement('td');
+  nameTd.textContent = student.name;
+  tr.appendChild(nameTd);
+  
+  const idTd = document.createElement('td');
+  idTd.textContent = student.id;
+  tr.appendChild(idTd);
+  
+  const emailTd = document.createElement('td');
+  emailTd.textContent = student.email;
+  tr.appendChild(emailTd);
+  
+  const actionsTd = document.createElement('td');
+  
+  const editBtn = document.createElement('button');
+  editBtn.textContent = 'Edit';
+  editBtn.className = 'edit-btn';
+  editBtn.setAttribute('data-id', student.id);
+  actionsTd.appendChild(editBtn);
+  
+  const deleteBtn = document.createElement('button');
+  deleteBtn.textContent = 'Delete';
+  deleteBtn.className = 'delete-btn';
+  deleteBtn.setAttribute('data-id', student.id);
+  actionsTd.appendChild(deleteBtn);
+  
+  tr.appendChild(actionsTd);
+  
+  return tr;
 }
 
 /**
@@ -56,7 +91,12 @@ function createStudentRow(student) {
  * 3. For each student, call `createStudentRow` and append the returned <tr> to `studentTableBody`.
  */
 function renderTable(studentArray) {
-  // ... your implementation here ...
+  studentTableBody.innerHTML = '';
+  
+  studentArray.forEach(student => {
+    const row = createStudentRow(student);
+    studentTableBody.appendChild(row);
+  });
 }
 
 /**
@@ -72,7 +112,27 @@ function renderTable(studentArray) {
  * 5. Clear all three password input fields.
  */
 function handleChangePassword(event) {
-  // ... your implementation here ...
+  event.preventDefault();
+  
+  const currentPassword = document.querySelector('#current-password').value;
+  const newPassword = document.querySelector('#new-password').value;
+  const confirmPassword = document.querySelector('#confirm-password').value;
+  
+  if (newPassword !== confirmPassword) {
+    alert('Passwords do not match.');
+    return;
+  }
+  
+  if (newPassword.length < 8) {
+    alert('Password must be at least 8 characters.');
+    return;
+  }
+  
+  alert('Password updated successfully!');
+  
+  document.querySelector('#current-password').value = '';
+  document.querySelector('#new-password').value = '';
+  document.querySelector('#confirm-password').value = '';
 }
 
 /**
@@ -91,7 +151,32 @@ function handleChangePassword(event) {
  * 5. Clear the "student-name", "student-id", "student-email", and "default-password" input fields.
  */
 function handleAddStudent(event) {
-  // ... your implementation here ...
+  event.preventDefault();
+  
+  const name = document.querySelector('#student-name').value.trim();
+  const id = document.querySelector('#student-id').value.trim();
+  const email = document.querySelector('#student-email').value.trim();
+  
+  if (!name || !id || !email) {
+    alert('Please fill out all required fields.');
+    return;
+  }
+  
+  const existingStudent = students.find(student => student.id === id);
+  if (existingStudent) {
+    alert('A student with this ID already exists.');
+    return;
+  }
+  
+  const newStudent = { name, id, email };
+  students.push(newStudent);
+  
+  renderTable(students);
+  
+  document.querySelector('#student-name').value = '';
+  document.querySelector('#student-id').value = '';
+  document.querySelector('#student-email').value = '';
+  document.querySelector('#default-password').value = 'password123';
 }
 
 /**
@@ -106,7 +191,31 @@ function handleAddStudent(event) {
  * 3. (Optional) Check for "edit-btn" and implement edit logic.
  */
 function handleTableClick(event) {
-  // ... your implementation here ...
+  if (event.target.classList.contains('delete-btn')) {
+    const studentId = event.target.getAttribute('data-id');
+    
+    const confirmed = confirm('Are you sure you want to delete this student?');
+    if (!confirmed) return;
+    
+    students = students.filter(student => student.id !== studentId);
+    renderTable(students);
+  }
+  
+  if (event.target.classList.contains('edit-btn')) {
+    const studentId = event.target.getAttribute('data-id');
+    const student = students.find(s => s.id === studentId);
+    
+    if (student) {
+      const newName = prompt('Enter new name:', student.name);
+      const newEmail = prompt('Enter new email:', student.email);
+      
+      if (newName && newEmail) {
+        student.name = newName;
+        student.email = newEmail;
+        renderTable(students);
+      }
+    }
+  }
 }
 
 /**
@@ -121,7 +230,18 @@ function handleTableClick(event) {
  * - Call `renderTable` with the *filtered array*.
  */
 function handleSearch(event) {
-  // ... your implementation here ...
+  const searchTerm = searchInput.value.toLowerCase();
+  
+  if (searchTerm === '') {
+    renderTable(students);
+    return;
+  }
+  
+  const filteredStudents = students.filter(student => 
+    student.name.toLowerCase().includes(searchTerm)
+  );
+  
+  renderTable(filteredStudents);
 }
 
 /**
@@ -139,7 +259,31 @@ function handleSearch(event) {
  * 6. After sorting, call `renderTable(students)` to update the view.
  */
 function handleSort(event) {
-  // ... your implementation here ...
+  const th = event.currentTarget;
+  const columnIndex = th.cellIndex;
+  
+  const properties = ['name', 'id', 'email'];
+  if (columnIndex >= properties.length) return;
+  
+  const property = properties[columnIndex];
+  
+  let sortDir = th.getAttribute('data-sort-dir') || 'asc';
+  sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+  th.setAttribute('data-sort-dir', sortDir);
+  
+  students.sort((a, b) => {
+    let compareResult;
+    
+    if (property === 'name' || property === 'email') {
+      compareResult = a[property].localeCompare(b[property]);
+    } else if (property === 'id') {
+      compareResult = Number(a[property]) - Number(b[property]);
+    }
+    
+    return sortDir === 'asc' ? compareResult : -compareResult;
+  });
+  
+  renderTable(students);
 }
 
 /**
@@ -159,7 +303,45 @@ function handleSort(event) {
  * - "click" on each header in `tableHeaders` -> `handleSort`
  */
 async function loadStudentsAndInitialize() {
-  // ... your implementation here ...
+  try {
+    const response = await fetch('api/students.json');
+    
+    if (!response.ok) {
+      console.error('Failed to load students.json');
+      return;
+    }
+    
+    const data = await response.json();
+    students = data;
+    
+    renderTable(students);
+    
+    if (changePasswordForm) {
+      changePasswordForm.addEventListener('submit', handleChangePassword);
+    }
+    
+    if (addStudentForm) {
+      addStudentForm.addEventListener('submit', handleAddStudent);
+    }
+    
+    if (studentTableBody) {
+      studentTableBody.addEventListener('click', handleTableClick);
+    }
+    
+    if (searchInput) {
+      searchInput.addEventListener('input', handleSearch);
+    }
+    
+    tableHeaders.forEach(header => {
+      if (header.cellIndex < 3) {
+        header.addEventListener('click', handleSort);
+        header.style.cursor = 'pointer';
+      }
+    });
+    
+  } catch (error) {
+    console.error('Error loading students:', error);
+  }
 }
 
 // --- Initial Page Load ---

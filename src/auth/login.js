@@ -18,12 +18,16 @@
 // the HTML document is parsed before this script runs.
 
 // TODO: Select the login form. (You'll need to add id="login-form" to the <form> in your HTML).
+const loginForm = document.getElementById('login-form');
 
 // TODO: Select the email input element by its ID.
+const emailInput = document.getElementById('email');
 
 // TODO: Select the password input element by its ID.
+const passwordInput = document.getElementById('password');
 
 // TODO: Select the message container element by its ID.
+const messageContainer = document.getElementById('message-container');
 
 // --- Functions ---
 
@@ -39,7 +43,8 @@
  * (this will allow for CSS styling of 'success' and 'error' states).
  */
 function displayMessage(message, type) {
-  // ... your implementation here ...
+  messageContainer.textContent = message;
+  messageContainer.className = type;
 }
 
 /**
@@ -55,7 +60,8 @@ function displayMessage(message, type) {
  * A simple regex for this purpose is: /\S+@\S+\.\S+/
  */
 function isValidEmail(email) {
-  // ... your implementation here ...
+  const emailRegex = /\S+@\S+\.\S+/;
+  return emailRegex.test(email);
 }
 
 /**
@@ -69,7 +75,7 @@ function isValidEmail(email) {
  * 3. Return `false` if the password is not valid.
  */
 function isValidPassword(password) {
-  // ... your implementation here ...
+  return password.length >= 8;
 }
 
 /**
@@ -86,8 +92,49 @@ function isValidPassword(password) {
  * - Call `displayMessage("Login successful!", "success")`.
  * - (Optional) Clear the email and password input fields.
  */
-function handleLogin(event) {
-  // ... your implementation here ...
+async function handleLogin(event) {
+  event.preventDefault();
+  
+  const email = emailInput.value.trim();
+  const password = passwordInput.value.trim();
+  
+  if (!isValidEmail(email)) {
+    displayMessage("Invalid email format.", "error");
+    return;
+  }
+  
+  if (!isValidPassword(password)) {
+    displayMessage("Password must be at least 8 characters.", "error");
+    return;
+  }
+  
+  // Call the authentication API
+  try {
+    displayMessage("Logging in...", "pending");
+    
+    const response = await fetch('api/index.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, password })
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      displayMessage(data.message, "success");
+      // Redirect after successful login
+      setTimeout(() => {
+        window.location.href = '../../index.html';
+      }, 1000);
+    } else {
+      displayMessage(data.message, "error");
+    }
+  } catch (error) {
+    displayMessage("An error occurred. Please try again.", "error");
+    console.error('Login error:', error);
+  }
 }
 
 /**
@@ -99,7 +146,9 @@ function handleLogin(event) {
  * 3. The event listener should call the `handleLogin` function.
  */
 function setupLoginForm() {
-  // ... your implementation here ...
+  if (loginForm) {
+    loginForm.addEventListener('submit', handleLogin);
+  }
 }
 
 // --- Initial Page Load ---
