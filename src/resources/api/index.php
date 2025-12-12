@@ -627,15 +627,18 @@ try {
         
         // Otherwise, get all resources
         // TODO: Call getAllResources()
-         if ($action === 'comments' && $resource_id) {
-            getCommentsByResourceId($db, $resource_id);
-        }
+        if ($action === 'comments' && $resource_id) {
+        getCommentsByResourceId($db, $resource_id);
+        exit;
+    }
 
-        if ($id) {
-            getResourceById($db, $id);
-        }
+    if ($id) {
+        getResourceById($db, $id);
+        exit;
+    }
 
-        getAllResources($db);
+    getAllResources($db);
+}
         
     } elseif ($method === 'POST') {
         // TODO: Check the action parameter to determine which function to call
@@ -648,6 +651,7 @@ try {
         // TODO: Call createResource()
         if ($action === 'comment') {
             createComment($db, $data);
+             exit;
         }
 
         createResource($db, $data);
@@ -671,6 +675,7 @@ try {
         // Call deleteResource()
          if ($action === 'delete_comment') {
             deleteComment($db, $comment_id);
+             exit;
         }
 
         deleteResource($db, $id);

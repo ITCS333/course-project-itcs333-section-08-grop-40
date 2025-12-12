@@ -156,7 +156,7 @@ async function initializePage() {
   try {
     const [resourceRes, commentRes] = await Promise.all([
       fetch("./api/resources.json"),
-      fetch("./api/resource-comments.json")
+      fetch("./api/comments.json")
     ]);
 
     const resources = await resourceRes.json();

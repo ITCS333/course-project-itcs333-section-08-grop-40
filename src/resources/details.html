@@ -19,7 +19,8 @@
     
     <!-- TODO: Create a 'header' with a main heading ('h1'). You can use a dummy title like "Chapter 1 Notes". -->
 <header>
-        <h1>Chapter 1 Notes</h1>
+        <h1 id="resource-title">Chapter 1 Notes</h1>
+
     </header>
     <!-- TODO: Create the 'main' content area. -->
 <main>
@@ -32,12 +33,12 @@
         <!-- End of article. -->
   <article>
             
-            <p>
-                This resource includes an introduction to basic HTML structure, elements, and page layout.
-            </p>
+            <p id="resource-description">
+              This resource includes an introduction to basic HTML structure.
+             </p>
 
-            <a href="https://example.com" target="_blank">
-                Access Resource Material
+            <a id="resource-link" href="https://example.com" target="_blank">
+             Access Resource Material
             </a>
         </article>
         <!-- Section 2: Discussion Forum -->
@@ -50,7 +51,7 @@
             <section id="discussion-forum">
         
             <h2>Discussion</h2>
-            <div id="comments-list">
+            <div id="comment-list"></div>
 
                 <!-- Example Comment 1: -->
                 <!-- TODO: Use an 'article' for each comment. -->
@@ -69,7 +70,7 @@
                     <footer>Posted by: John Smith</footer>
                 </article>
 
-            </div>
+            
             <!-- Subsection 2.2: Add a Comment Form -->
             <!-- TODO: Create a 'form' for users to post new comments. Action can be '#'. -->
                 <!-- TODO: Use a 'fieldset' to group the controls. -->
