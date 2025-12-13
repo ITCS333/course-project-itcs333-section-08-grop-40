@@ -24,18 +24,14 @@ let currentComments = [];
 
 // --- Element Selections ---
 // TODO: Select all the elements you added IDs for in step 2.
-let weekTitle, weekStartDate, weekDescription,
-    weekLinksList, commentList, commentForm, newCommentText;
+const weekTitle=document.getElementById("week-title");
+const weekStartDate=document.getElementById("week-start-date");
+const weekDescription=document.getElementById("week-description");
+const weekLinksList=document.getElementById("week-links-list");
+const commentList=document.getElementById("comment-list");
+const commentForm=document.getElementById("comment-form");     
+const newCommentText=document.getElementById("new-comment-text");
 
-if (typeof document !== 'undefined') {
- weekTitle=document.getElementById("week-title");
- weekStartDate=document.getElementById("week-start-date");
-weekDescription=document.getElementById("week-description");
- weekLinksList=document.getElementById("week-links-list");
- commentList=document.getElementById("comment-list");
- commentForm=document.getElementById("comment-form");     
-newCommentText=document.getElementById("new-comment-text");
-}
 // --- Functions ---
 /**
  * TODO: Implement the getWeekIdFromURL function.
@@ -49,7 +45,6 @@ function getWeekIdFromURL() {
   const queryString=window.location.search;      
   const urlparms=new URLSearchParams(queryString);
   const WeekId=urlparms.get('id');
-
   
   return WeekId;
 }
@@ -67,7 +62,6 @@ function getWeekIdFromURL() {
  */
 function renderWeekDetails(week) {
   // ... your implementation here ...
-
   weekTitle.textContent=week.title;
 
   weekStartDate.textContent="Starts on: " + week.startDate;
@@ -76,11 +70,11 @@ function renderWeekDetails(week) {
 
   weekLinksList.innerHTML="";
 
-   (week.links|| []).forEach(link => {
+   week.links.forEach(link => {
         const li = document.createElement("li");
         const a = document.createElement("a");
-        a.href = link;        
-        a.textContent = link; 
+        a.href = link;        // العنوان يذهب للـ href
+        a.textContent = link; // النص نفسه
         li.appendChild(a);
         weekLinksList.appendChild(li);
     });
@@ -225,6 +219,5 @@ async function initializePage() {
 
 
 // --- Initial Page Load ---
-  if (typeof document !== 'undefined') {
-  initializePage();
-  }
+initializePage();
+
