@@ -13,7 +13,7 @@
 
 // --- Element Selections ---
 // TODO: Select the section for the week list ('#week-list-section').
-let listSection;
+const listSection = document.querySelector('#week-list-section');
 // --- Functions ---
 
 /**
@@ -68,22 +68,17 @@ function createWeekArticle(week) {
 
 async function loadWeeks() {
   // ... your implementation here ...
-  listSection = document.querySelector('#week-list-section');
-  if (!listSection) return;
+if (!listSection) return;
 
+  const response = await fetch('weeks.json');
+  const weeks = await response.json();
 
- const response = await fetch('weeks.json');
-       
- const weeks = await response.json();
+  listSection.innerHTML = '';
 
-
- listSection.innerHTML='';
-
- weeks.forEach(week => {
-  const article=createWeekArticle(week);
-  listSection.appendChild(article);
- });
-
- 
+  weeks.forEach(week => {
+    const article = createWeekArticle(week);
+    listSection.appendChild(article);
+  });
 }
+ 
 document.addEventListener('DOMContentLoaded', loadWeeks);
