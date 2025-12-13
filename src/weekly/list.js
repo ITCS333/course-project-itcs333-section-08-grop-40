@@ -13,11 +13,8 @@
 
 // --- Element Selections ---
 // TODO: Select the section for the week list ('#week-list-section').
-let listSection;
 
-if (typeof document !== 'undefined') {
-  listSection = document.querySelector('#week-list-section');
-}
+  const listSection = document.querySelector('#week-list-section');
 
 // --- Functions ---
 
@@ -77,7 +74,7 @@ async function loadWeeks() {
   // ... your implementation here ...
   if (!listSection) return;
 
-  try{
+
      const response = await fetch('weeks.json');
         if (!response.ok) {
             throw new Error('Failed to load weeks.json');
@@ -92,9 +89,6 @@ async function loadWeeks() {
   listSection.appendChild(article);
  });
 
-}catch(error){
-  console.error('Error loading weeks:', error);
-}
  
 }
 document.addEventListener('DOMContentLoaded', loadWeeks);
