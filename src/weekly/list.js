@@ -30,9 +30,9 @@ function createWeekArticle(week) {
   const{id,title,startDate,description}=week;
   const article=document.createElement('article');
   article.className='week-article';
-  const h3=document.createElement('h3');
-  h3.textContent=title || '';
-  article.appendChild(h3);
+  const h2=document.createElement('h2');
+  h2.textContent=title || '';
+  article.appendChild(h2);
 
   if(startDate){
     
@@ -90,3 +90,4 @@ async function loadWeeks() {
  
 }
 document.addEventListener('DOMContentLoaded', loadWeeks);
+

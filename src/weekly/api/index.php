@@ -963,6 +963,6 @@ function isValidSortField($field, $allowedFields) {
     // Use in_array()
     // Return true if valid, false otherwise
      return in_array($field, $allowedFields);
-}
+}  
 
 ?>

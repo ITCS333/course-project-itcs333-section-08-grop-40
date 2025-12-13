@@ -184,7 +184,7 @@ async function loadAndInitialize() {
 catch(error){
   console.error('Error initializing page:',error);
 }
-}
+  }
 
 
 
