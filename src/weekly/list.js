@@ -27,28 +27,27 @@
 function createWeekArticle(week) {
   // ... your implementation here ...
   
-
-  const{id,title,startDate,description}=week;
   const article=document.createElement('article');
+  article.className = 'week-article';
+  
   const h2=document.createElement('h2');
-  h2.textContent=title || '';
+  h2.textContent=week.title;
   article.appendChild(h2);
 
-  if(startDate){
     
-    const dateP=document.createElement('P');
-    dateP.textContent = `Starts on: ${startDate}`;
+    const dateP=document.createElement('p');
+    dateP.textContent = `Starts on: ${week.startDate}`;
     article.appendChild(dateP);
-  }
+  
 
-    const descP=document.createElement('P');
-    descP.textContent=description || '';
+    const descP=document.createElement('p');
+    descP.textContent=week.description;
     article.appendChild(descP);
 
-    const detailsLink = document.createElement('a');
-    detailsLink.href = `details.html?id=${id}`;
-    detailsLink.textContent = 'View Details & Discussion';
-    article.appendChild(detailsLink);
+    const link = document.createElement('a');
+    link.href = `details.html?id=${week.id}`;
+    link.textContent = 'View Details & Discussion';
+    article.appendChild(link);
 
     return article;
   }
