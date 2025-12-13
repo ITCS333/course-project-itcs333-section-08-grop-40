@@ -13,8 +13,9 @@
 
 // --- Element Selections ---
 // TODO: Select the section for the week list ('#week-list-section').
-const listSection = document.querySelector('#week-list-section');
+
 // --- Functions ---
+
 /**
  * TODO: Implement the createWeekArticle function.
  * It takes one week object {id, title, startDate, description}.
@@ -24,27 +25,37 @@ const listSection = document.querySelector('#week-list-section');
  */
 function createWeekArticle(week) {
   // ... your implementation here ...
+  
+
+  const{id,title,startDate,description}=week;
   const article=document.createElement('article');
- 
+  article.className='week-article';
   const h2=document.createElement('h2');
-  h2.textContent=week.title;
+  h2.textContent=title || '';
   article.appendChild(h2);
 
-  const dateP=document.createElement('p');
-  dateP.textContent = `Starts on: ${week.startDate}`;
-  article.appendChild(dateP);
-  
-  const descP=document.createElement('p');
-  descP.textContent=week.description;
-  article.appendChild(descP);
-
-  const link = document.createElement('a');
-  link.href = `details.html?id=${week.id}`;
-  link.textContent = 'View Details & Discussion';
-  article.appendChild(link);
-
-   return article;
+  if(startDate){
+    
+    const dateP=document.createElement('P');
+    dateP.textContent=`Start Date: ${startDate}`;
+    article.appendChild(dateP);
   }
+
+    const descP=document.createElement('P');
+    descP.textContent=description || '';
+    article.appendChild(descP);
+
+    const detailsLink = document.createElement('a');
+    detailsLink.href = `details.html?id=${id}`;
+    detailsLink.textContent = 'View Details & Discussion';
+    detailsLink.className = 'details-link';
+    article.appendChild(detailsLink);
+
+    return article;
+  }
+
+
+
 /**
  * TODO: Implement the loadWeeks function.
  * This function needs to be 'async'.
@@ -58,15 +69,24 @@ function createWeekArticle(week) {
  */
 async function loadWeeks() {
   // ... your implementation here ...
-  const response = await fetch('weeks.json');
-  const weeks = await response.json();
+  try{
+     const response = await fetch('weeks.json');
+        if (!response.ok) {
+            throw new Error('Failed to load weeks.json');
+        }
+ const weeks = await response.json();
 
-  listSection.innerHTML = '';
+ const listSection = document.querySelector('#week-list-section');
+ listSection.innerHTML='';
 
-  weeks.forEach(week => {
-    const article = createWeekArticle(week);
-    listSection.appendChild(article);
-  });
+ weeks.forEach(week => {
+  const article=createWeekArticle(week);
+  listSection.appendChild(article);
+ });
+
+}catch(error){
+  console.error('Error loading weeks:', error);
 }
  
+}
 document.addEventListener('DOMContentLoaded', loadWeeks);
