@@ -13,8 +13,7 @@
 
 // --- Element Selections ---
 // TODO: Select the section for the week list ('#week-list-section').
-  const listSection = document.querySelector('#week-list-section');
-
+let listSection;
 // --- Functions ---
 
 /**
@@ -69,6 +68,7 @@ function createWeekArticle(week) {
 
 async function loadWeeks() {
   // ... your implementation here ...
+  listSection = document.querySelector('#week-list-section');
   if (!listSection) return;
 
 
