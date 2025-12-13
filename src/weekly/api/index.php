@@ -95,7 +95,7 @@ if ($rawData !=='' && json_last_error() !== JSON_ERROR_NONE) {
 // TODO: Parse query parameters
 // Get the 'resource' parameter to determine if request is for weeks or comments
 // Example: ?resource=weeks or ?resource=comments
-$resource = $_GET['resource'] ?? null;
+$resource = $_GET['resource'] ?? 'weeks';
 
 // ============================================================================
 // WEEKS CRUD OPERATIONS
@@ -503,21 +503,29 @@ function deleteWeek($db, $weekId) {
     // TODO: Check if week exists
     // Prepare and execute a SELECT query
     // If not found, return error response with 404 status
+    if (!$weekId || trim($weekId) === '') {
+        http_response_code(400);
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Missing required parameter: week_id'
+        ]);
+        return;
+    }
 
-$sql = "SELECT 1 FROM weeks WHERE week_id = :week_id";
-$stmt = $db->prepare($sql);
-$stmt->execute([
+   $sql = "SELECT 1 FROM weeks WHERE week_id = :week_id";
+  $stmt = $db->prepare($sql);
+   $stmt->execute([
     ':week_id' => $weekId
 ]);
+   if (!$stmt->fetch()) {
+        http_response_code(404);
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Week not found'
+        ]);
+        return;
+    }
 
-if (!$stmt->fetch()) {
-    http_response_code(404);
-    echo json_encode([
-        'status' => 'error',
-        'message' => 'Week not found'
-    ]);
-    return;
-}
 
     
     // TODO: Delete associated comments first (to maintain referential integrity)
@@ -952,7 +960,7 @@ function sanitizeInput($data) {
 
 
 /**
- * Helper function to validate allowed sort fields
+  * Helper function to validate allowed sort fields
  * 
  * @param string $field - Field name to validate
  * @param array $allowedFields - Array of allowed field names
@@ -963,6 +971,6 @@ function isValidSortField($field, $allowedFields) {
     // Use in_array()
     // Return true if valid, false otherwise
      return in_array($field, $allowedFields);
-}  
+}
 
 ?>

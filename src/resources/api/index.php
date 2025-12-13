@@ -1,4 +1,9 @@
 <?php
+session_start(); // TASK2301
+
+if (!isset($_SESSION['api_initialized'])) {
+    $_SESSION['api_initialized'] = true; // TASK2315
+}
 /**
  * Course Resources API
  * 
