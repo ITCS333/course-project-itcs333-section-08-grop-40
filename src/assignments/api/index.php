@@ -1,8 +1,25 @@
 <?php
+session_start();
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
+
+try {
+$pdo = new PDO("mysql:host=localhost;dbname=test", "user", "pass");
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    $stmt = $pdo->prepare("SELECT * FROM assignments WHERE id = :id");
+    $stmt->execute([':id' => 1]); 
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    $_SESSION['user_id'] = 1;
+    $_SESSION['username'] = 'testuser';
+
+
+}catch(PDOException $e){
+sendResponse(["success" => false, "message" => "Database error: " . $e->getMessage()], 500);
+
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
@@ -15,8 +32,14 @@ $input = json_decode(file_get_contents('php://input'), true);
 $assignmentsFile = 'assignments.json';
 $commentsFile = 'comments.json';
 
-$assignments = json_decode(file_get_contents($assignmentsFile), true);
-$comments = json_decode(file_get_contents($commentsFile), true);
+try {
+    $assignments = json_decode(file_get_contents($assignmentsFile), true);
+    if ($assignments === null) $assignments = [];
+    $comments = json_decode(file_get_contents($commentsFile), true);
+    if ($comments === null) $comments = [];
+} catch (Exception $e) {
+    sendResponse(["success" => false, "message" => "Failed to read data files: ".$e->getMessage()], 500);
+}
 
 function sendResponse($data, $statusCode = 200) {
     http_response_code($statusCode);
@@ -34,81 +57,113 @@ function sanitizeInput($data) {
 // ============================
 
 function getAllAssignmentsJSON($assignments) {
-    sendResponse(["success" => true, "data" => $assignments]);
+    try {
+        sendResponse(["success" => true, "data" => $assignments]);
+    } catch (Exception $e) {
+        sendResponse(["success" => false, "message" => $e->getMessage()], 500);
+    }
 }
 
 function getAssignmentByIdJSON($assignments, $id) {
-    foreach ($assignments as $asg) {
-        if ($asg['id'] === $id) {
-            sendResponse(["success" => true, "data" => $asg]);
+    try {
+        foreach ($assignments as $asg) {
+            if ($asg['id'] === $id) {
+                sendResponse(["success" => true, "data" => $asg]);
+            }
         }
+        sendResponse(["success" => false, "message" => "Assignment not found"], 404);
+    } catch (Exception $e) {
+        sendResponse(["success" => false, "message" => $e->getMessage()], 500);
     }
-    sendResponse(["success" => false, "message" => "Assignment not found"], 404);
 }
 
 function createAssignmentJSON(&$assignments, $assignmentsFile, $data) {
-    if (empty($data['id']) || empty($data['title']) || empty($data['description']) || empty($data['dueDate'])) {
-        sendResponse(["success" => false, "message" => "Missing required fields"], 400);
-    }
-
-    // check duplicate
-    foreach ($assignments as $asg) {
-        if ($asg['id'] === $data['id']) {
-            sendResponse(["success" => false, "message" => "Assignment ID already exists"], 409);
+    try {
+        if (empty($data['id']) || empty($data['title']) || empty($data['description']) || empty($data['dueDate'])) {
+            sendResponse(["success" => false, "message" => "Missing required fields"], 400);
         }
+
+        foreach ($assignments as $asg) {
+            if ($asg['id'] === $data['id']) {
+                sendResponse(["success" => false, "message" => "Assignment ID already exists"], 409);
+            }
+        }
+
+        $newAssignment = [
+            "id" => sanitizeInput($data['id']),
+            "title" => sanitizeInput($data['title']),
+            "description" => sanitizeInput($data['description']),
+            "dueDate" => sanitizeInput($data['dueDate']),
+            "files" => isset($data['files']) ? array_map('sanitizeInput', $data['files']) : []
+        ];
+
+        $assignments[] = $newAssignment;
+
+        if (file_put_contents($assignmentsFile, json_encode($assignments, JSON_PRETTY_PRINT)) === false) {
+            throw new Exception("Failed to write assignments file");
+        }
+
+        sendResponse(["success" => true, "message" => "Assignment created", "data" => $newAssignment], 201);
+
+    } catch (Exception $e) {
+        sendResponse(["success" => false, "message" => $e->getMessage()], 500);
     }
-
-    $newAssignment = [
-        "id" => sanitizeInput($data['id']),
-        "title" => sanitizeInput($data['title']),
-        "description" => sanitizeInput($data['description']),
-        "dueDate" => sanitizeInput($data['dueDate']),
-        "files" => isset($data['files']) ? array_map('sanitizeInput', $data['files']) : []
-    ];
-
-    $assignments[] = $newAssignment;
-    file_put_contents($assignmentsFile, json_encode($assignments, JSON_PRETTY_PRINT));
-    sendResponse(["success" => true, "message" => "Assignment created", "data" => $newAssignment], 201);
 }
 
 function updateAssignmentJSON(&$assignments, $assignmentsFile, $data) {
-    if (empty($data['id'])) sendResponse(["success" => false, "message" => "Assignment ID is required"], 400);
+    try {
+        if (empty($data['id'])) sendResponse(["success" => false, "message" => "Assignment ID is required"], 400);
 
-    $found = false;
-    foreach ($assignments as &$asg) {
-        if ($asg['id'] === $data['id']) {
-            $found = true;
-            if (isset($data['title'])) $asg['title'] = sanitizeInput($data['title']);
-            if (isset($data['description'])) $asg['description'] = sanitizeInput($data['description']);
-            if (isset($data['dueDate'])) $asg['dueDate'] = sanitizeInput($data['dueDate']);
-            if (isset($data['files'])) $asg['files'] = array_map('sanitizeInput', $data['files']);
-            break;
+        $found = false;
+        foreach ($assignments as &$asg) {
+            if ($asg['id'] === $data['id']) {
+                $found = true;
+                if (isset($data['title'])) $asg['title'] = sanitizeInput($data['title']);
+                if (isset($data['description'])) $asg['description'] = sanitizeInput($data['description']);
+                if (isset($data['dueDate'])) $asg['dueDate'] = sanitizeInput($data['dueDate']);
+                if (isset($data['files'])) $asg['files'] = array_map('sanitizeInput', $data['files']);
+                break;
+            }
         }
+
+        if (!$found) sendResponse(["success" => false, "message" => "Assignment not found"], 404);
+
+        if (file_put_contents($assignmentsFile, json_encode($assignments, JSON_PRETTY_PRINT)) === false) {
+            throw new Exception("Failed to write assignments file");
+        }
+
+        sendResponse(["success" => true, "message" => "Assignment updated"]);
+
+    } catch (Exception $e) {
+        sendResponse(["success" => false, "message" => $e->getMessage()], 500);
     }
-
-    if (!$found) sendResponse(["success" => false, "message" => "Assignment not found"], 404);
-
-    file_put_contents($assignmentsFile, json_encode($assignments, JSON_PRETTY_PRINT));
-    sendResponse(["success" => true, "message" => "Assignment updated"]);
 }
 
 function deleteAssignmentJSON(&$assignments, $assignmentsFile, &$comments, $commentsFile, $id) {
-    $found = false;
-    foreach ($assignments as $index => $asg) {
-        if ($asg['id'] === $id) {
-            array_splice($assignments, $index, 1);
-            $found = true;
-            break;
+    try {
+        $found = false;
+        foreach ($assignments as $index => $asg) {
+            if ($asg['id'] === $id) {
+                array_splice($assignments, $index, 1);
+                $found = true;
+                break;
+            }
         }
+
+        if (!$found) sendResponse(["success" => false, "message" => "Assignment not found"], 404);
+
+        if (isset($comments[$id])) unset($comments[$id]);
+
+        if (file_put_contents($assignmentsFile, json_encode($assignments, JSON_PRETTY_PRINT)) === false ||
+            file_put_contents($commentsFile, json_encode($comments, JSON_PRETTY_PRINT)) === false) {
+            throw new Exception("Failed to update files");
+        }
+
+        sendResponse(["success" => true, "message" => "Assignment deleted"]);
+
+    } catch (Exception $e) {
+        sendResponse(["success" => false, "message" => $e->getMessage()], 500);
     }
-
-    if (!$found) sendResponse(["success" => false, "message" => "Assignment not found"], 404);
-
-    if (isset($comments[$id])) unset($comments[$id]);
-
-    file_put_contents($assignmentsFile, json_encode($assignments, JSON_PRETTY_PRINT));
-    file_put_contents($commentsFile, json_encode($comments, JSON_PRETTY_PRINT));
-    sendResponse(["success" => true, "message" => "Assignment deleted"]);
 }
 
 // ============================
@@ -116,35 +171,57 @@ function deleteAssignmentJSON(&$assignments, $assignmentsFile, &$comments, $comm
 // ============================
 
 function getCommentsByAssignmentJSON($comments, $assignmentId) {
-    $replies = $comments[$assignmentId] ?? [];
-    sendResponse(["success" => true, "data" => $replies]);
+    try {
+        $replies = $comments[$assignmentId] ?? [];
+        sendResponse(["success" => true, "data" => $replies]);
+    } catch (Exception $e) {
+        sendResponse(["success" => false, "message" => $e->getMessage()], 500);
+    }
 }
 
 function createCommentJSON(&$comments, $commentsFile, $data) {
-    if (empty($data['assignment_id']) || empty($data['author']) || empty($data['text'])) {
-        sendResponse(["success" => false, "message" => "Missing required fields"], 400);
+    try {
+        if (empty($data['assignment_id']) || empty($data['author']) || empty($data['text'])) {
+            sendResponse(["success" => false, "message" => "Missing required fields"], 400);
+        }
+
+        $reply = [
+            "author" => sanitizeInput($data['author']),
+            "text" => sanitizeInput($data['text'])
+        ];
+
+        if (!isset($comments[$data['assignment_id']])) $comments[$data['assignment_id']] = [];
+
+        $comments[$data['assignment_id']][] = $reply;
+
+        if (file_put_contents($commentsFile, json_encode($comments, JSON_PRETTY_PRINT)) === false) {
+            throw new Exception("Failed to write comments file");
+        }
+
+        sendResponse(["success" => true, "message" => "Comment added", "data" => $reply], 201);
+
+    } catch (Exception $e) {
+        sendResponse(["success" => false, "message" => $e->getMessage()], 500);
     }
-
-    $reply = [
-        "author" => sanitizeInput($data['author']),
-        "text" => sanitizeInput($data['text'])
-    ];
-
-    if (!isset($comments[$data['assignment_id']])) $comments[$data['assignment_id']] = [];
-
-    $comments[$data['assignment_id']][] = $reply;
-    file_put_contents($commentsFile, json_encode($comments, JSON_PRETTY_PRINT));
-    sendResponse(["success" => true, "message" => "Comment added", "data" => $reply], 201);
 }
 
 function deleteCommentJSON(&$comments, $commentsFile, $assignmentId, $index) {
-    if (!isset($comments[$assignmentId])) sendResponse(["success" => false, "message" => "Assignment not found"], 404);
+    try {
+        if (!isset($comments[$assignmentId])) sendResponse(["success" => false, "message" => "Assignment not found"], 404);
 
-    if (!isset($comments[$assignmentId][$index])) sendResponse(["success" => false, "message" => "Comment not found"], 404);
+        if (!isset($comments[$assignmentId][$index])) sendResponse(["success" => false, "message" => "Comment not found"], 404);
 
-    array_splice($comments[$assignmentId], $index, 1);
-    file_put_contents($commentsFile, json_encode($comments, JSON_PRETTY_PRINT));
-    sendResponse(["success" => true, "message" => "Comment deleted"]);
+        array_splice($comments[$assignmentId], $index, 1);
+
+        if (file_put_contents($commentsFile, json_encode($comments, JSON_PRETTY_PRINT)) === false) {
+            throw new Exception("Failed to update comments file");
+        }
+
+        sendResponse(["success" => true, "message" => "Comment deleted"]);
+
+    } catch (Exception $e) {
+        sendResponse(["success" => false, "message" => $e->getMessage()], 500);
+    }
 }
 
 // ============================
@@ -177,5 +254,3 @@ switch ($resource) {
 }
 ?>
 
-
-?>
