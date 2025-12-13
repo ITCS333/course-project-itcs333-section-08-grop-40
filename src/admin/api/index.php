@@ -1,4 +1,6 @@
 <?php
+session_start();
+$_SESSION['api_active'] = true;
 /**
  * Student Management API
  * 
