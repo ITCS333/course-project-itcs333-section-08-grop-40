@@ -12,8 +12,9 @@
 */
 
 // --- Element Selections ---
+let listSection;
 // TODO: Select the section for the week list ('#week-list-section').
-const listSection = document.querySelector('#week-list-section');
+
 // --- Functions ---
 
 /**
@@ -25,7 +26,6 @@ const listSection = document.querySelector('#week-list-section');
  */
 function createWeekArticle(week) {
   // ... your implementation here ...
-  
   const article=document.createElement('article');
   article.className = 'week-article';
   
@@ -33,22 +33,20 @@ function createWeekArticle(week) {
   h2.textContent=week.title;
   article.appendChild(h2);
 
-    
-    const dateP=document.createElement('p');
-    dateP.textContent = `Starts on: ${week.startDate}`;
-    article.appendChild(dateP);
+  const dateP=document.createElement('p');
+  dateP.textContent = `Starts on: ${week.startDate}`;
+  article.appendChild(dateP);
   
+  const descP=document.createElement('p');
+  descP.textContent=week.description;
+  article.appendChild(descP);
 
-    const descP=document.createElement('p');
-    descP.textContent=week.description;
-    article.appendChild(descP);
+  const link = document.createElement('a');
+  link.href = `details.html?id=${week.id}`;
+  link.textContent = 'View Details & Discussion';
+  article.appendChild(link);
 
-    const link = document.createElement('a');
-    link.href = `details.html?id=${week.id}`;
-    link.textContent = 'View Details & Discussion';
-    article.appendChild(link);
-
-    return article;
+   return article;
   }
 
 
@@ -68,6 +66,7 @@ function createWeekArticle(week) {
 
 async function loadWeeks() {
   // ... your implementation here ...
+ listSection = document.querySelector('#week-list-section');  
 if (!listSection) return;
 
   const response = await fetch('weeks.json');
