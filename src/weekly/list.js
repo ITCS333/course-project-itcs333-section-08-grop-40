@@ -12,11 +12,9 @@
 */
 
 // --- Element Selections ---
-let listSection;
 // TODO: Select the section for the week list ('#week-list-section').
-
+const listSection = document.querySelector('#week-list-section');
 // --- Functions ---
-
 /**
  * TODO: Implement the createWeekArticle function.
  * It takes one week object {id, title, startDate, description}.
@@ -27,8 +25,7 @@ let listSection;
 function createWeekArticle(week) {
   // ... your implementation here ...
   const article=document.createElement('article');
-  article.className = 'week-article';
-  
+ 
   const h2=document.createElement('h2');
   h2.textContent=week.title;
   article.appendChild(h2);
@@ -48,9 +45,6 @@ function createWeekArticle(week) {
 
    return article;
   }
-
-
-
 /**
  * TODO: Implement the loadWeeks function.
  * This function needs to be 'async'.
@@ -62,13 +56,8 @@ function createWeekArticle(week) {
  * - Call `createWeekArticle()`.
  * - Append the returned <article> element to `listSection`.
  */
-
-
 async function loadWeeks() {
   // ... your implementation here ...
- listSection = document.querySelector('#week-list-section');  
-if (!listSection) return;
-
   const response = await fetch('weeks.json');
   const weeks = await response.json();
 
