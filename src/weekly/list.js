@@ -14,11 +14,6 @@
 // --- Element Selections ---
 // TODO: Select the section for the week list ('#week-list-section').
 
-  let listSection;
-
-if (typeof document !== 'undefined') {
-   listSection = document.querySelector('#week-list-section');
-}
 
 // --- Functions ---
 
@@ -35,7 +30,6 @@ function createWeekArticle(week) {
 
   const{id,title,startDate,description}=week;
   const article=document.createElement('article');
-  article.className='week-article';
   const h2=document.createElement('h2');
   h2.textContent=title || '';
   article.appendChild(h2);
@@ -54,7 +48,6 @@ function createWeekArticle(week) {
     const detailsLink = document.createElement('a');
     detailsLink.href = `details.html?id=${id}`;
     detailsLink.textContent = 'View Details & Discussion';
-    detailsLink.className = 'details-link';
     article.appendChild(detailsLink);
 
     return article;
@@ -77,13 +70,12 @@ function createWeekArticle(week) {
 
 async function loadWeeks() {
   // ... your implementation here ...
+  const listSection = document.querySelector('#week-list-section');
   if (!listSection) return;
 
 
-     const response = await fetch('weeks.json');
-        if (!response.ok) {
-            throw new Error('Failed to load weeks.json');
-        }
+ const response = await fetch('weeks.json');
+       
  const weeks = await response.json();
 
 
