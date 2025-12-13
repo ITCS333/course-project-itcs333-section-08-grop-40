@@ -14,12 +14,15 @@
 // --- Global Data Store ---
 // This will hold the weekly data loaded from the JSON file.
 let weeks = [];
-
+let weekForm;
+let weeksTableBody;
 // --- Element Selections ---
 // TODO: Select the week form ('#week-form').
-const weekForm=document.querySelector('#week-form')
+if (typeof document !== 'undefined') {
+weekForm=document.querySelector('#week-form')
 // TODO: Select the weeks table body ('#weeks-tbody').
-const weeksTableBody=document.querySelector('#weeks-tbody')
+weeksTableBody=document.querySelector('#weeks-tbody')
+}
 // --- Functions ---
 
 /**
@@ -79,6 +82,7 @@ const editBtn = document.createElement('button');
  */
 function renderTable() {
   // ... your implementation here ...
+  if (!weeksTableBody) return; 
   weeksTableBody.innerHTML='';
   weeks.forEach((week)=>{
   const row=createWeekRow(week);
@@ -192,4 +196,7 @@ catch(error){
 
 // --- Initial Page Load ---
 // Call the main async function to start the application.
-loadAndInitialize();
+if (typeof document !== 'undefined') {
+  loadAndInitialize();
+}
+
