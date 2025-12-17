@@ -31,23 +31,33 @@
   <tr>
     <th>Task Number</th>
     <th>Student Name</th>
+    <th>Task Description</th>
   </tr>
+
   <tr>
     <td>Task 1</td>
     <td>Forat Yousif Buhassan</td>
+    <td>Admin + Authentication</td>
   </tr>
+
   <tr>
     <td>Task 2</td>
     <td>Waad Shayea Khlif</td>
+    <td>Resources Page</td>
   </tr>
+
   <tr>
     <td>Task 3</td>
     <td>Nawraa Alshakhoori</td>
+    <td>Weekly Breakdown</td>
   </tr>
+
   <tr>
     <td>Task 4</td>
     <td>Fatima Fuad Aldoseri</td>
+    <td>Assignments Page</td>
   </tr>
 </table>
+
 
 ## A link to your live, hosted application on Replit.
