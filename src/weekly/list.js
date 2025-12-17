@@ -23,36 +23,37 @@
  * - The "View Details & Discussion" link's `href` MUST be set to `details.html?id=${id}`.
  * (This is how the detail page will know which week to load).
  */
+let listSection;
 function createWeekArticle(week) {
   // ... your implementation here ...
-  
+    const { id, title, start_date, description } = week;
 
-  const{id,title,startDate,description}=week;
-  const article=document.createElement('article');
-  article.className='week-article';
-  const h2=document.createElement('h2');
-  h2.textContent=title || '';
+  const article = document.createElement('article');
+  article.className = 'week-article';
+
+  const h2 = document.createElement('h2');
+  h2.textContent = title || '';
   article.appendChild(h2);
 
-  if(startDate){
-    
-    const dateP=document.createElement('P');
-    dateP.textContent=`Start Date: ${startDate}`;
+  if (start_date) {
+    const dateP = document.createElement('p');
+    dateP.textContent = `Starts on: ${start_date}`;
     article.appendChild(dateP);
   }
 
-    const descP=document.createElement('P');
-    descP.textContent=description || '';
-    article.appendChild(descP);
+  const descP = document.createElement('p');
+  descP.textContent = description || '';
+  article.appendChild(descP);
 
-    const detailsLink = document.createElement('a');
-    detailsLink.href = `details.html?id=${id}`;
-    detailsLink.textContent = 'View Details & Discussion';
-    detailsLink.className = 'details-link';
-    article.appendChild(detailsLink);
+  const detailsLink = document.createElement('a');
+  detailsLink.href = `details.html?id=${id}`;
+  detailsLink.textContent = 'View Details & Discussion';
+  article.appendChild(detailsLink);
 
-    return article;
-  }
+  return article;
+}
+
+  
 
 
 
@@ -69,25 +70,29 @@ function createWeekArticle(week) {
  */
 async function loadWeeks() {
   // ... your implementation here ...
-  try{
-     const response = await fetch('weeks.json');
-        if (!response.ok) {
-            throw new Error('Failed to load weeks.json');
-        }
- const weeks = await response.json();
+  try {
+    const response = await fetch('weeks.json');
+    if (!response.ok) {
+      throw new Error('Failed to load weeks.json');
+    }
 
- const listSection = document.querySelector('#week-list-section');
- listSection.innerHTML='';
+    const weeks = await response.json();
+    listSection.innerHTML = '';
 
- weeks.forEach(week => {
-  const article=createWeekArticle(week);
-  listSection.appendChild(article);
- });
+    weeks.forEach(week => {
+      const article = createWeekArticle(week);
+      listSection.appendChild(article);
+    });
 
-}catch(error){
-  console.error('Error loading weeks:', error);
+  } catch (error) {
+    console.error('Error loading weeks:', error);
+  }
 }
- 
-}
-document.addEventListener('DOMContentLoaded', loadWeeks);
+
+document.addEventListener('DOMContentLoaded', () => {
+  listSection = document.querySelector('#week-list-section');
+  loadWeeks();
+});
+
+
 
