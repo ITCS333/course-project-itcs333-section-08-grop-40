@@ -156,10 +156,12 @@ function handleAddComment(event) {
  * 7. If the assignment is not found, display an error.
  */
  async function initializePage() {
- currentAssignmentId = getAssignmentIdFromURL();
-  if (!currentAssignmentId) {
-    alert('Error: No assignment ID found in URL.');
-    return;
+ currentAssignmentId = Number(getAssignmentIdFromURL());
+if (!currentAssignmentId) {
+  alert('Error: No assignment ID found in URL.');
+  return;
+}
+
   }
   
   try {
