@@ -4,71 +4,131 @@
 -->
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+    <!-- TODO: Add the 'meta' tag for character encoding (UTF-8). -->
     <meta charset="UTF-8">
+    
+    <!-- TODO: Add the responsive 'viewport' meta tag. -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assignment Details</title>
-    <script src="details.js" defer></script>
+
+    <!-- TODO: Add a title, e.g., "Manage Assignments". -->
+    <title>Manage Assignments</title>
+
+    <!-- TODO: Link to your CSS framework or stylesheet. -->
     <link rel="stylesheet" href="../common/style.css">
+
+    <script src="admin.js" defer></script>
 </head>
-
 <body>
-
+    <!-- TODO: Create a 'header' with a main heading ('h1') "Manage Assignments". -->
     <header>
-        <h1 id="assignment-title">Assignment 1: HTML Basics</h1>
+        <h1>Manage Assignments</h1>
     </header>
 
+    <!-- TODO: Create the 'main' content area. -->
     <main>
+        <!-- Section 1: Add/Edit Assignment Form -->
+        <!-- TODO: Create a 'section' for the form. -->
+        <section>
+            <!-- TODO: Add a sub-heading ('h2') "Add a New Assignment". -->
+            <h2>Add a New Assignment</h2>
 
-        <!-- Section 1: Assignment Information -->
-        <article>
-            <p id="assignment-due-date" >Due: YYYY-MM-DD</p>
-
-            <h2>Description</h2>
-            <p id="assignment-description" >This is a detailed description of the assignment. Replace this with real assignment data later.</p>
-
-            <h2>Attached Files & Links</h2>
-            <ul id="assignment-files-list" >
-                <li><a href="#">assignment-brief.pdf</a></li>
-                <li><a href="#">example-code.zip</a></li>
-            </ul>
-        </article>
-
-        <!-- Section 2: Discussion Forum -->
-        <section id="discussion-forum">
-            <h2>Questions & Discussion</h2>
-
-            <!-- Subsection 2.1: Existing Comments -->
-            <div id="comment-list">
-
-                <article class="comment">
-                    <p>Is it okay to use a 'section' inside an 'article'?</p>
-                    <footer>Posted by: Jane Smith</footer>
-                </article>
-
-                <article class="comment">
-                    <p>Can we submit the assignment as a PDF instead of Word?</p>
-                    <footer>Posted by: Student A</footer>
-                </article>
-
-            </div>
-
-            <!-- Subsection 2.2: Add a Comment Form -->
-            <form action="#" id="comment-form">
+            <!-- TODO: Create a 'form' with an id "assignment-form". Action can be '#'. -->
+            <form id="assignment-form" action="#">
+                <!-- TODO: Use a 'fieldset' to group the form controls. -->
                 <fieldset>
-                    <legend>Ask a Question</legend>
+                    <!-- TODO: Add a 'legend', e.g., "Assignment Details". -->
+                    <legend>Assignment Details</legend>
 
-                    <label for="new-comment">Your Comment</label>
-                    <textarea id="new-comment-text" required></textarea>
+                    <!-- TODO: Add a 'label' and 'input' for the assignment title.
+                         - label 'for': "assignment-title"
+                         - input 'id': "assignment-title", type="text", required -->
+                    <label for="assignment-title">Title:</label>
+                    <input id="assignment-title" type="text" required>
 
-                    <button type="submit">Post Comment</button>
+                    <!-- TODO: Add a 'label' and 'textarea' for the description.
+                         - label 'for': "assignment-description"
+                         - textarea 'id': "assignment-description", rows="5", required -->
+                    <label for="assignment-description">Description:</label>
+                    <textarea id="assignment-description" rows="5" required></textarea>
+
+                    <!-- TODO: Add a 'label' and 'input' for the due date.
+                         - label 'for': "assignment-due-date"
+                         - input 'id': "assignment-due-date", type="date", required -->
+                    <label for="assignment-due-date">Due Date:</label>
+                    <input id="assignment-due-date" type="date" required>
+                    
+                    <!-- TODO: Add a 'label' and 'textarea' for attached files or links (one per line).
+                         - label 'for': "assignment-files"
+                         - textarea 'id': "assignment-files", rows="3" -->
+                    <label for="assignment-files">Attached file/link (one per line):</label>
+                    <textarea id="assignment-files" rows="3"></textarea>
+
+                    <!-- TODO: Add a 'button' to submit the form.
+                         - id="add-assignment", type="submit", Text: "Add Assignment" -->
+                    <button id="add-assignment" type="submit">Add Assignment</button>
                 </fieldset>
+                <!-- End of fieldset. -->
             </form>
-
+            <!-- End of form. -->
         </section>
+        <!-- End of form section. -->
 
+        <!-- Section 2: Existing Assignments List -->
+        <!-- TODO: Create a 'section' to display the list of current assignments. -->
+        <section>
+            <!-- TODO: Add a sub-heading ('h2') "Current Assignments". -->
+            <h2>Current Assignments</h2>
+
+            <!-- TODO: Create a 'table' with id "assignments-table". -->
+            <table id="assignments-table">
+                <!-- TODO: Create a 'thead' and a 'tr' inside it. -->
+                <thead>
+                    <tr>
+                        <!-- TODO: Add 'th' elements for "Title", "Due Date", and "Actions". -->
+                        <th>Title</th>
+                        <th>Due Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                
+                <!-- TODO: Create a 'tbody' for the data. -->
+                <tbody>
+                    <!-- TODO: Add 1-2 rows of dummy data to see the structure. -->
+                    <!-- Example Row 1: -->
+                    <!-- TODO: Create a 'tr' for the first assignment. -->
+                    <tr>
+                        <!-- TODO: Add 'td' cells for a title (e.g., "HTML Basics") and a due date. -->
+                        <td>HTML Basics</td>
+                        <td>2025-11-10</td>
+                        
+                        <!-- TODO: Add a 'td' containing the action buttons. -->
+                        <td>
+                            <!-- TODO: Add an "Edit" button. -->
+                            <button>Edit</button>
+                            <!-- TODO: Add a "Delete" button. -->
+                            <button>Delete</button>
+                        </td>
+                        <!-- End of actions 'td'. -->
+                    </tr>
+                    <!-- End of the row. -->
+
+                    <!-- Adding a second dummy row to meet 1-2 rows -->
+                    <tr>
+                        <td>CSS Styling</td>
+                        <td>2025-11-17</td>
+                        <td>
+                            <button>Edit</button>
+                            <button>Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+                <!-- End of tbody. -->
+            </table>
+            <!-- End of table. -->
+        </section>
+        <!-- End of list section. -->
     </main>
-
+    <!-- End of main. -->
 </body>
 </html>
