@@ -46,7 +46,7 @@ function createWeekArticle(week) {
     article.appendChild(descP);
 
     const detailsLink = document.createElement('a');
-    detailsLink.href = `details.html?week_id=${id}`;
+    detailsLink.href = `details.html?id=${id}`;
     detailsLink.textContent = 'View Details & Discussion';
     detailsLink.className = 'details-link';
     article.appendChild(detailsLink);
