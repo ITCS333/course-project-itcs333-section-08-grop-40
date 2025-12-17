@@ -190,8 +190,7 @@ async function initializePage() {
 
   try{
     const[weekResponse,commentResponse]=await Promise.all([
-    fetch("api/weeks.json"),
-    fetch("api/comments.json")
+    fetch("weeks.json"),fetch("comments.json")
       ]);
 
       const weeksData=await weekResponse.json();
