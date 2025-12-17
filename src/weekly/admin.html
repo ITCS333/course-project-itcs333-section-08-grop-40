@@ -45,7 +45,7 @@
                          - input 'id': "week-title", type="text", required
                          - Example placeholder: "Week 1: Introduction to HTML" -->
                          <label for="week-title">Week Title:</label>
-                         <input id="week-title" type="text" placeholder="Week 1: Introduction to HTML" required>
+                         <input id="week-title" name="title" type="text" placeholder="Week 1: Introduction to HTML" required>
                
 
                     <!-- TODO: Add a 'label' and 'input' for the week's starting date.
@@ -53,19 +53,19 @@
                          - input 'id': "week-start-date", type="date", required -->
                          <label for="week-start-date">Start Date:</label>
                          
-                         <input id="week-start-date" type="date" required>
+                         <input id="week-start-date" name="startDate" type="date" required>
 
                     <!-- TODO: Add a 'label' and 'textarea' for the week's description and notes.
                          - label 'for': "week-description"
                          - textarea 'id': "week-description", rows="5" -->
                          <label for="week-description">Week Description:</label>
-                         <textarea id="week-description" rows="5"></textarea>
+                         <textarea id="week-description" name="description"rows="5"></textarea>
                     
                     <!-- TODO: Add a 'label' and 'textarea' for links to exercises or resources (one link per line).
                          - label 'for': "week-links"
                          - textarea 'id': "week-links", rows="3" -->
                           <label for="week-links">Exercise/Resource Links (one per line):</label>
-                         <textarea id="week-links" rows="3"></textarea>
+                         <textarea id="week-links" name="links" rows="3"></textarea>
 
                     <!-- TODO: Add a 'button' to submit the form.
                          - id="add-week", type="submit", Text: "Add Week" -->
