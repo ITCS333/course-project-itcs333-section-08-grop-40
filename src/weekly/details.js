@@ -44,7 +44,7 @@ function getWeekIdFromURL() {
   // ... your implementation here ...
   const queryString=window.location.search;      
   const urlparms=new URLSearchParams(queryString);
-  const WeekId=urlparms.get('id');
+  const WeekId=urlparms.get('week_id');
   
   return WeekId;
 }
