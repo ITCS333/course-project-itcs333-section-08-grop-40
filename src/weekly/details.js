@@ -70,7 +70,7 @@ function renderWeekDetails(week) {
 
   weekLinksList.innerHTML="";
 
-   week.links.forEach(link => {
+  (week.links ||[]).forEach(link => {
         const li = document.createElement("li");
         const a = document.createElement("a");
         a.href = link;        // العنوان يذهب للـ href
@@ -190,8 +190,8 @@ async function initializePage() {
 
   try{
     const[weekResponse,commentResponse]=await Promise.all([
-      fetch("weeks.json"),fetch("week-comments.json")
-
+    fetch("api/weeks.json"),
+    fetch("api/comments.json")
       ]);
 
       const weeksData=await weekResponse.json();
