@@ -6,7 +6,6 @@ if (!isset($_SESSION['user'])) {
         'name' => 'guest'
     ];
 }
-
 /**
  * Weekly Course Breakdown API
  * 
