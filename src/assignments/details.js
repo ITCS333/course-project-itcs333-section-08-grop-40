@@ -156,32 +156,33 @@ function handleAddComment(event) {
  * 7. If the assignment is not found, display an error.
  */
  async function initializePage() {
- currentAssignmentId = Number(getAssignmentIdFromURL());
-if (!currentAssignmentId) {
-  alert('Error: No assignment ID found in URL.');
-  return;
-}
+  currentAssignmentId = getAssignmentIdFromURL();
 
+  if (!currentAssignmentId) {
+    alert('Error: No assignment ID found in URL.');
+    return;
   }
-  
+
   try {
     const [assignmentsResponse, commentsResponse] = await Promise.all([
       fetch('assignments.json'),
       fetch('comments.json')
     ]);
-    
+
     const assignments = await assignmentsResponse.json();
     const comments = await commentsResponse.json();
-    const assignment = assignments.find(ass => ass.id === currentAssignmentId);
+
+    const assignment = assignments.find(
+      ass => ass.id === currentAssignmentId
+    );
+
     currentComments = comments[currentAssignmentId] || [];
-    
-if (assignment) {
-renderAssignmentDetails(assignment);
-renderComments();
-commentFormEl.addEventListener('submit', handleAddComment);
-    } 
-    
-    else {
+
+    if (assignment) {
+      renderAssignmentDetails(assignment);
+      renderComments();
+      commentFormEl.addEventListener('submit', handleAddComment);
+    } else {
       alert('Error: Assignment not found.');
     }
 
